@@ -2,27 +2,25 @@ package hmaclib
 
 import "crypto/hmac"
 import "crypto/sha256"
-import "os"
 import "encoding/base64"
 
 func DecodeHMAC(message string) []byte {
 	decoded, err := base64.StdEncoding.DecodeString(message)
 	if err != nil {
-		return nil
+		panic(err)
 	}
 	return decoded
 }
 
-func CalculateHMAC(message string) string {
-	key := os.Getenv("HMACLIB_SALT")
+func CalculateHMAC(message []byte, key []byte) string {
 	mac := hmac.New(sha256.New, []byte(key))
-	mac.Write([]byte(message))
+	mac.Write(message)
 	expectedMAC := mac.Sum(nil)
 	return base64.StdEncoding.EncodeToString(expectedMAC)
 }
 
-func CheckHMAC(message string, messageMAC string) bool {
+func CheckHMAC(message []byte, messageMAC string, key []byte) bool {
 	extracted_mac := DecodeHMAC(messageMAC)
-	calculated_hmac := DecodeHMAC(CalculateHMAC(message))
+	calculated_hmac := DecodeHMAC(CalculateHMAC(message, key))
 	return hmac.Equal(calculated_hmac, extracted_mac)
 }
