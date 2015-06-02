@@ -30,7 +30,7 @@ func TestCalculatingHMAC(t *testing.T) {
 func TestCheckHMAC(t *testing.T) {
 	message := []byte("hello world")
 	message_hmac := CalculateHMAC(message, key)
-	if CheckHMAC(message, message_hmac, key) {
+	if CheckHMAC(message, message_hmac, key) != true {
 		t.Errorf("failed hmac comparison. this is weird, right?")
 	}
 }
